@@ -1,3 +1,4 @@
-const show = require('./show.js');
+import show from './show.js'
+import './index.css'
 
 show('webpack')

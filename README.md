@@ -133,3 +133,89 @@ node_modules/.bin/webpack
 },
 ```
 然后在命令行输入`npm run start`发现和上面那条命令运行效果是一样的。
+
+## Loader
+
+loader 让 webpack 能够去处理那些非 JavaScript 文件（webpack 自身只理解 JavaScript）。loader 可以将所有类型的文件转换为 webpack 能够处理的有效模块，然后你就可以利用 webpack 的打包能力，对它们进行处理。
+
+### Babel
+由于浏览器不能直接编译es6/es7/jsx这类语法， 所以需要用loader将这类语法转化为浏览器可以编译的语法。首先需要安装Babel的几个库。
+
+```
+npm i --save-dev babel-loader babel-core babel-preset-env  
+babel-preset-react  //编译jsx语法
+```
+接下来改一下webpack.config.js如下：
+```
+module.exports = {
+  //......
+  module:{
+    rules: [
+      {
+        // 用 babel-loader 转换 JavaScript和jsx 文件
+        test: /\.(jsx|js)$/,
+        // ?cacheDirectory 表示传给 babel-loader 的参数，用于缓存 babel 编译结果加快重新编译速度
+        use: ['babel-loader?cacheDirectory'],
+        // 表示只对src目录下的文件起作用
+        include: path.resolve(__dirname, 'src')
+      }
+    ]
+  }
+}
+```
+配置 Babel 有很多方式，这里推荐使用 .babelrc 文件管理。
+
+```
+// ..babelrc
+{
+    "presets": ["babel-preset-env"]
+}
+```
+将之前的js代码转为es6代码
+```
+//show.js
+
+export default (content) => {
+  window.document.getElementById('app').innerText = `hello ${content}`
+}
+
+//main.js
+
+import show from './show.js'
+
+show('webpack')
+```
+命令行`npm run start`编译一下，打开bundle.js看到已经编译成es5语法
+![](./rd-img/15155512755a557a2b6ec76.png)
+
+### 处理css文件
+因为webpack不能直接处理css文件， 所以我们需要装两个loader：
+```
+npm install style-loader css-loader --save-dev
+```
+看两个loader的作用
+- css-loader 它是用来处理css文件中的url(),前者可以让 CSS 文件也支持 impost,并解释css-loader
+- style-loader 将解析出来的css插入到html中去
+
+建立index.css文件夹,代码如下：
+/src/index.css
+```
+body{
+  background: red;
+  color: #fff;
+}
+```
+修改webpack.config.js文件
+```
+module.exports = {
+  //......
+      {
+        test: /\.css$/,
+        // minimize告诉css开启压缩
+        use: ['style-loader', 'css-loader?minimize']
+      }
+    ]
+  }
+}
+```
+打开控制台，检查元素可以看到样式已经添加到页面中
