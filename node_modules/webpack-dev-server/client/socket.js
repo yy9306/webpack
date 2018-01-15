@@ -5,7 +5,7 @@ const SockJS = require('sockjs-client/dist/sockjs');
 let retries = 0;
 let sock = null;
 
-function socket(url, handlers) {
+const socket = function initSocket(url, handlers) {
   sock = new SockJS(url);
 
   sock.onopen = function onopen() {
@@ -26,7 +26,7 @@ function socket(url, handlers) {
       const retryInMs = 1000 * Math.pow(2, retries) + Math.random() * 100;
       retries += 1;
 
-      setTimeout(function cb() {
+      setTimeout(() => {
         socket(url, handlers);
       }, retryInMs);
     }
@@ -37,6 +37,6 @@ function socket(url, handlers) {
     const msg = JSON.parse(e.data);
     if (handlers[msg.type]) { handlers[msg.type](msg.data); }
   };
-}
+};
 
 module.exports = socket;

@@ -2,3 +2,8 @@ body{
   background: red;
   color: #fff;
 }
+#image{
+   background-image: url(./images/zly.jpg);
+   width:466px;
+   height:453px;
+}

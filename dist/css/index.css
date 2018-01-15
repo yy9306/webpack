@@ -1,0 +1,9 @@
+body{
+  background: red;
+  color: #fff;
+}
+#image{
+   background-image: url(http://192.168.101.233:1717/images/b056cfb66d2ed4fd3d5274bb70428330.jpg);
+   width:466px;
+   height:453px;
+}

@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack"
+    "start": "webpack",
+    "server": "webpack-dev-server"
   },
   "keywords": [],
   "author": "",
@@ -16,19 +17,22 @@
     "babel-preset-react": "^6.24.1",
     "css-loader": "^0.28.8",
     "extract-text-webpack-plugin": "^3.0.2",
+    "file-loader": "^1.1.6",
     "html-webpack-plugin": "^2.30.1",
     "node-sass": "^4.7.2",
     "postcss-cssnext": "^3.0.2",
     "postcss-loader": "^2.0.9",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.19.1",
+    "url-loader": "^0.6.2",
     "vue-loader": "^13.6.2",
     "vue-template-compiler": "^2.5.13",
     "web-webpack-plugin": "^1.10.1",
     "webpack": "^3.6.0",
-    "webpack-dev-server": "^2.9.7"
+    "webpack-dev-server": "^2.10.1"
   },
   "dependencies": {
+    "html-withimg-loader": "^0.1.16",
     "vue": "^2.5.13"
   }
 }

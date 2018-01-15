@@ -219,3 +219,144 @@ module.exports = {
 }
 ```
 打开控制台，检查元素可以看到样式已经添加到页面中
+#### css文件分离
+
+虽然webpack不推荐将css文件分离，因为分离增加请求数量，但是需求不是问们能决定的，有时候我们还是要分离的
+我们可以安装
+```
+npm install --save-dev extract-text-webpack-plugin
+```
+然后配置webpack.config.js如下：
+
+```
+const extractTextPlugin = require("extract-text-webpack-plugin");
+把之前的css的loader更改为
+module:{
+ .....
+ // 之前的css更改为
+    {
+      test: /\.css$/,
+      use: extractTextPlugin.extract({
+        use: "css-loader"
+      })
+    }
+  .....
+
+  // plugins 中配置
+  plugins: [
+    new extractTextPlugin("css/index.css") // css打包后的路径
+  ]    
+```
+
+打包之后我们可以看到css文件分离出来，页面也可以正常显示。
+
+### 处理图片文件
+因为webpack不能直接处理css文件， 所以我们需要装两个loader：
+```
+ npm install --save-dev file-loader url-loader
+```
+
+两个loader的作用
+- file-loader 解决路径问题，webpack打包后成为js文件，图片路径是相对于html的而不是我们之前的css文件，这样的话就会报错，file-loader就很好的解决了这个问题
+- url-loader 如果图片过多就会造成很多的http请求，url-loader 将图片转化为字符串编码，这样请求图片的时候就不用http请求了，如果图片过大，编码时间过长，因此url-loader提供了一个limit参数，小于这个参数的将转化为编码，大于的不转化
+
+下面我们在html标签中加入以下代码：
+```
+<div id="image"></div>
+```
+在css文件中给image添加样式：
+```
+#image{
+   background-image: url(./images/zly.jpg);
+   width:466px;
+   height:453px;
+}
+```
+配置webpack.config.js文件
+```
+module:{
+......
+    {
+      test: /\.(png|gif|jpg)$/,
+      use: [{
+        loader: 'url-loader',
+        options: {
+          limit: 50000 // 如果图片大小小于limit的值，那么图片将会打包成Base64格式，写入到js里面
+        }
+      }]
+    }
+.....
+```
+
+#### 为什么只使用了url-loader
+
+我们发现并没有在webpack.config.js中使用file-loader，但是依然打包成功了。我们需要了解file-loader和url-loader的关系。url-loader和file-loader是什么关系呢？简答地说，url-loader封装了file-loader。url-loader不依赖于file-loader，即使用url-loader时，只需要安装url-loader即可，不需要安装file-loader，因为url-loader内置了file-loader。通过上面的介绍，我们可以看到，url-loader工作分两种情况：
+- 文件大于limit的值，url-loader会调用file-loader进行处理，参数也会直接传给file-loader
+- 文件小于limit的值，url-loader将会把文件转为Base64格式
+
+打包成功后发现图片没有显示出来，看一下打包的css文件的路径，发现css分离后路径错误，我在网上找了一个有效的方法，在说之前我们应该了解一下热更新，就是我们写代码的时候，想看效果不需要再次打包，我们在双屏幕下就能加快开发效率。
+
+首先我们使用npm安装webpack-dev-server，命令如下：
+
+```
+npm install webpack-dev-server --save-dev
+```
+
+接下来配置webpack.config.js
+```
+  devServer:{
+      //设置基本目录结构
+      contentBase:path.resolve(__dirname,'dist'),
+      //服务器的IP地址，可以使用IP也可以使用localhost
+      host:'localhost',
+      //服务端压缩是否开启
+      compress:true,
+      //配置服务端口号
+      port:1717
+  }
+```
+
+现在我们还不能直接在命令行中用webpack-dev-server，我们需要在package.json中配置一下， 配置如下：
+
+```
+"scripts": {
+  ......
+  "server": "webpack-dev-server --open"
+},
+```
+
+然后我们在浏览器地址栏输入我们就可以看到效果， 我们试着更改一下代码， 我们就可以体会到他的便捷了。
+
+现在我们该解决图片路径问题了，这种方法也是我感觉到比较好的方式，更改webpack.config.js文件
+
+```
+const website ={
+    publicPath:"http://192.168.101.233:1717/"
+}
+
+// 添加出口的输出路径
+output: {
+  path: path.resolve(__dirname, 'dist'),
+  filename: 'bundle.js',
+  publicPath: website.publicPath
+}
+```
+
+然后用webpack命令打包， 在浏览器中输入`http://192.168.101.233:1717/`我们看到图片出来了，现在有个问题，webpack不希望我们在html中用img标签，如我们我们想要写img标签的话， 我们需要安装一个loader,安装命令如下：
+```
+npm install html-withimg-loader --save
+```
+然后配置webpack.config.js文件：
+```
+module:{
+......
+    {
+        test: /\.(htm|html)$/i,
+         use:[ 'html-withimg-loader']
+    },
+......
+  ]
+},
+```
+
+然后在命令行中进行打包， 我们可以在在地址栏输入然后查看效果

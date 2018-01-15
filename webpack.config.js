@@ -1,10 +1,16 @@
 const path = require('path')
+const extractTextPlugin = require("extract-text-webpack-plugin");
+const htmlPlugin= require('html-webpack-plugin');
 
+const website ={
+    publicPath:"http://192.168.101.233:1717/"
+}
 module.exports = {
   entry: './src/main.js',
   output: {
+    path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
-    path: path.resolve(__dirname, './dist')
+    publicPath: website.publicPath
   },
   module:{
     rules: [
@@ -18,9 +24,45 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        // minimize告诉css开启压缩
-        use: ['style-loader', 'css-loader?minimize']
+        use: extractTextPlugin.extract({
+          use: "css-loader"
+        })
+      },
+      {
+          test: /\.(htm|html)$/i,
+           use:[ 'html-withimg-loader']
+      },
+      {
+        test: /\.(png|gif|jpg|svg)$/,
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 200,
+            outputPath:'images/',
+          }
+        }]
       }
     ]
+  },
+  plugins: [
+     new extractTextPlugin("css/index.css"),
+     new htmlPlugin({
+          minify:{
+              removeAttributeQuotes: false
+          },
+          hash:true,
+          template:'./src/index.html'
+
+      })
+  ],
+  devServer:{
+      //设置基本目录结构
+      contentBase: path.resolve(__dirname,'dist'),
+      //服务器的IP地址，可以使用IP也可以使用localhost
+      host:'192.168.101.233',
+      //服务端压缩是否开启
+      compress:true,
+      //配置服务端口号
+      port:1717
   }
 }
