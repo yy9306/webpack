@@ -76,6 +76,8 @@ var _show2 = _interopRequireDefault(_show);
 
 __webpack_require__(2);
 
+__webpack_require__(3);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 (0, _show2.default)('webpack.js');
@@ -97,6 +99,12 @@ exports.default = function (content) {
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

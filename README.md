@@ -360,3 +360,54 @@ module:{
 ```
 
 然后在命令行中进行打包， 我们可以在在地址栏输入然后查看效果
+
+
+### 处理scss文件
+sass 使我们常用的css预处理语言， 处理scss文件前我们要先安装两个loader，命令如下：
+```
+npm install --save-dev node-sass sass-loader
+```
+然后配置webpack.config.js文件
+
+/src/style/style.scss
+```
+$color: blue;
+
+// 记得在html文件中加入id为nav的div标签
+#nav{
+ width: 100%;
+ height: 50px;
+ background-color: $color;
+}
+```
+
+```
+module:{
+......
+    {
+      test: /\.scss$/,
+      use: ['style-loader', 'css-loader', 'sass-loader']
+    },
+```
+
+接下来我们在命令行打包，然后在地址栏输入，我们就可以看到效果，我们也可以看一下bundle.js文件
+![](./rd-img/15159909215a5c2f89a43c2.png)
+
+最后我们也可以将sass分离出去，我们把之前sass的loader改一下
+```
+{
+  test: /\.scss$/,
+  use: extractTextPlugin.extract({
+    use: [
+      {
+        loader: 'css-loader'
+      },
+      {
+        loader: 'sass-loader'
+      }
+    ]
+  })
+}
+```
+
+命令行打包之后我们可以看到scss文件的内容分离到index.css中去了

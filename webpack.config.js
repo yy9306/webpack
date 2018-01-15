@@ -29,6 +29,20 @@ module.exports = {
         })
       },
       {
+        test: /\.scss$/,
+        use: extractTextPlugin.extract({
+          use: [
+            {
+              loader: 'css-loader'
+            },
+            {
+              loader: 'sass-loader'
+            }
+          ]
+        })
+        // use: ['style-loader', 'css-loader', 'sass-loader']
+      },
+      {
           test: /\.(htm|html)$/i,
            use:[ 'html-withimg-loader']
       },
