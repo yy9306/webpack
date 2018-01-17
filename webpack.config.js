@@ -66,7 +66,9 @@ module.exports = {
     ]
   },
   plugins: [
-     new extractTextPlugin("css/index.css"),
+     new extractTextPlugin({
+        filename: `src/[name]_[contenthash:8].css`
+     }),
      new htmlPlugin({
           minify:{
               removeAttributeQuotes: false

@@ -483,3 +483,80 @@ body{
 然后我们命令行运行可以后我们打开dist下面的css文件如下：
 
 ![](./rd-img/1234ffgg.png)
+
+更多配置请查看 [github地址](https://github.com/postcss/postcss-loader)
+
+
+## plugins
+
+Plugin 是用来扩展 Webpack 功能的，通过在构建流程里注入钩子实现，它给 Webpack 带来了很大的灵活性。
+
+我们在之前css分离的时候已经用到了`extractTextPlugin`， 它的作用是将js中的css代码抽离到一个文件中
+```
+plugins: [
+   new extractTextPlugin({
+      // name 是文件的名称也就是main  contenthash:8 是取8位hash值
+      filename: `src/[name]_[contenthash:8].css`
+   }),
+```
+
+#### 生成html文件
+
+首先我们配置webpack.config.js文件，先引入我们的html-webpack-plugin插件。
+
+首先命令行安装一个包：
+```
+npm install --save-dev html-webpack-plugin
+```
+
+webpack.config.js
+```
+const htmlPlugin= require('html-webpack-plugin');
+
+plugins: [
+.....
+  new htmlPlugin({
+      // 对html文件压缩
+       minify:{
+           // true 去掉双引号 false相反
+           removeAttributeQuotes:true
+       },
+       // hash值避免js有缓存
+       hash:true,
+       // 打包后的名称
+       template:'./src/index.html'
+
+   })
+]
+```
+最后我们将dist目录下的index.html文件去掉， 在src下面创建html文件，打包后我们发现dist下面生成了html文件
+还有一个`web-webpack-plugin` 和 `html-webpack-plugin` 有一样的功能 [github](https://github.com/gwuhaolin/web-webpack-plugin)
+
+
+#### js压缩
+
+webpack中已经集成了一个webpack.config.js，不需要安装
+
+webpack.config.js
+```
+const uglify = require('uglifyjs-webpack-plugin');
+
+plugins:[
+    new uglify()
+],
+```
+
+需要注意的是压缩和热更不能同时使用，压缩 一般在生产环境
+
+## 加载 Source Map
+
+在使用webpack时只要通过简单的devtool配置，webapck就会自动给我们生产source maps 文件，map文件是一种对应编译文件和源文件的方法，让我们调试起来更简单。
+
+在配置devtool时，webpack给我们提供了四种选项。
+
+- source-map:在一个单独文件中产生一个完整且功能完全的文件。这个文件具有最好的source map,但是它会减慢打包速度；
+- cheap-module-source-map:在一个单独的文件中产生一个不带列映射的map，不带列映射提高了打包速度，但是也使得浏览器开发者工具只能对应到具体的行，不能对应到具体的列（符号）,会对调试造成不便。
+- eval-source-map:使用eval打包源文件模块，在同一个文件中生产干净的完整版的sourcemap，但是对打包后输出的JS文件的执行具有性能和安全的隐患。在开发阶段这是一个非常好的选项，在生产阶段则一定要不开启这个选项。
+- cheap-module-eval-source-map:这是在打包文件时最快的生产source map的方法，生产的 Source map 会和打包后的JavaScript文件同行显示，没有影射列，和eval-source-map选项具有相似的缺点。
+
+四种打包模式，有上到下打包速度越来越快，不过同时也具有越来越多的负面作用，较快的打包速度的后果就是对执行和调试有一定的影响。source- map只适合开发阶段，上线前记得修改这些调试设置。
