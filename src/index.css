@@ -1,9 +1,18 @@
+:root {
+  --red: red;
+}
+
 body{
-  background: red;
-  color: #fff;
+  background: var(--red);
+  color: #000;
+}
+#app{
+  display: flex;
+  justify-content: center;
 }
 #image{
    background-image: url(./images/zly.jpg);
    width:466px;
    height:453px;
+   transform: rotate(45deg);
 }

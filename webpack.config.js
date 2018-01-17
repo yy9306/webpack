@@ -25,7 +25,15 @@ module.exports = {
       {
         test: /\.css$/,
         use: extractTextPlugin.extract({
-          use: "css-loader"
+          use: [
+            { loader: "css-loader",
+               options: {
+                 //这里可以简单理解为，如果css文档中有import 进来的文档也进行处理
+                 importLoaders: 1
+               }
+            },
+            {loader: "postcss-loader"}
+          ]
         })
       },
       {
@@ -40,7 +48,6 @@ module.exports = {
             }
           ]
         })
-        // use: ['style-loader', 'css-loader', 'sass-loader']
       },
       {
           test: /\.(htm|html)$/i,

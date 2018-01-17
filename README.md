@@ -411,3 +411,75 @@ module:{
 ```
 
 命令行打包之后我们可以看到scss文件的内容分离到index.css中去了
+
+### postcss-loader让css兼容各个浏览器
+
+在我们写css3样式的时候，有些样式我们必须写浏览器的前缀才能兼容各大浏览器，但是我们不一定能记住所有，好在postcss-loader帮我们处理的这些事情， 接下来我们就开始了解一下吧
+
+首先需要安装如下：
+```
+  npm install --save-dev postcss-loader postcss-cssnext
+```
+
+编写loader
+
+webpack.config.js
+
+```
+module:{
+  rules: [
+  ......
+    {
+      test: /\.css$/,
+      use: extractTextPlugin.extract({
+        use: [
+          { loader: "css-loader",
+             options: {
+               //这里可以简单理解为，如果css文档中有import 进来的文档也进行处理
+               importLoaders: 1
+             }
+          },
+          {loader: "postcss-loader"}
+        ]
+      })
+    },
+  .....
+```
+postcss.config.js
+
+postCSS推荐在项目根目录（和webpack.config.js同级），建立一个postcss.config.js文件。
+
+```
+module.exports = {
+    // 需要使用的插件列表
+    plugins: [
+        // 可以使用下一代css的写法
+        require('postcss-cssnext')
+    ]
+}
+```
+index.css
+
+```
+:root {
+  --red: red;
+}
+body{
+  background: var(--red);
+  color: #000;
+}
+#app{
+  display: flex;
+  justify-content: center;
+}
+#image{
+   background-image: url(./images/zly.jpg);
+   width:466px;
+   height:453px;
+   transform: rotate(45deg);
+}
+```
+
+然后我们命令行运行可以后我们打开dist下面的css文件如下：
+
+![](./rd-img/1234ffgg.png)
