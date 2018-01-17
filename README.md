@@ -530,7 +530,7 @@ plugins: [
 ]
 ```
 最后我们将dist目录下的index.html文件去掉， 在src下面创建html文件，打包后我们发现dist下面生成了html文件
-还有一个`web-webpack-plugin` 和 `html-webpack-plugin` 有一样的功能 [github](https://github.com/gwuhaolin/web-webpack-plugin)
+还有一个`web-webpack-plugin` 和 `html-webpack-plugin` 有一样的功能 详情看[github](https://github.com/gwuhaolin/web-webpack-plugin)
 
 
 #### js压缩
