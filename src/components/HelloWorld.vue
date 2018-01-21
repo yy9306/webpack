@@ -9,3 +9,14 @@
 
   }
 </script>
+
+<style lang="scss" scoped>
+$n-color: blue;
+
+#hello{
+  border: 1px solid blue;
+  h1{
+    color: yellow;
+  }
+}
+</style>

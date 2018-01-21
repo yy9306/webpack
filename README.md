@@ -694,3 +694,78 @@ package.json
 
 接下来命令行输入`webpack`打包， 打包成功后输入`npm run dev`,浏览器会自动打开，显示如下：
 ![](./rd-img/324fdgd.png)
+
+### 让vue支持css样式
+
+安装css-Loader
+```
+ npm install --save css-loader
+```
+
+然后配置package.config.js
+```
+module: {
+......
+    {
+      test: /\.css$/,
+      // vue-style-loader 是style-loader 的一个分支
+      use: ["vue-style-loader", "css-loader"]
+    }
+  ]
+}
+```
+
+在app.vue中添加样式
+
+./src/app.vue
+```
+<style media="screen" scoped>
+  #App h1{
+    color: red;
+    font-weight: bold;
+  }
+</style>
+```
+
+然后在命令行输入刚才的命令，就可以在浏览器中看到:
+![](./rd-img/15165481925a64b060a42e2.png)
+
+### 支持css预处理语言scss
+
+首先安装的包
+```
+npm install --save-dev sass-loader node-sass
+```
+
+配置webpack.config.js
+```
+module: {
+  .....
+    {
+      test: /\.scss$/,
+      use: ["vue-style-loader", "css-loader", "sass-loader"]
+    }
+  ]
+}
+```
+
+更改HelloWorld.vue文件
+
+./src/components/HelloWorld.vue
+```
+<style lang="scss" scoped>
+$n-color: blue;
+
+#hello{
+  border: 1px solid blue;
+  h1{
+    color: yellow;
+  }
+}
+</style>
+```
+
+在命令行打包，可以在浏览器看到的效果：
+![](./rd-img/15165492175a64b4610b97c.png)
+
+当然也可以支持`@import 'common/style.scss'`这种方式引入
