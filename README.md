@@ -560,3 +560,137 @@ plugins:[
 - cheap-module-eval-source-map:这是在打包文件时最快的生产source map的方法，生产的 Source map 会和打包后的JavaScript文件同行显示，没有影射列，和eval-source-map选项具有相似的缺点。
 
 四种打包模式，有上到下打包速度越来越快，不过同时也具有越来越多的负面作用，较快的打包速度的后果就是对执行和调试有一定的影响。source- map只适合开发阶段，上线前记得修改这些调试设置。
+
+
+## 开始配置一个vue的项目环境
+
+把之前的删除，重新配置，首先 `npm init -y`来创建一个package.json,然后再命令行安装依赖
+```
+// 依次安装下面的包
+"dependencies": {
+  "vue": "^2.5.13",
+  "vue-loader": "^13.7.0",
+  "vue-router": "^3.0.1",
+  "vue-template-compiler": "^2.5.13",
+  "webpack-dev-server": "^2.11.1"
+}
+```
+
+需要注意的是 `vue`和`vue-template-compiler` 的版本要保持一致，否之会报错。
+
+### 开始配置webpack
+
+webpack.config.js
+```
+const path = require('path')
+module.exports = {
+  entry: './src/main.js', // 入口
+  output: {  // 出口
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.vue$/,
+        use: ["vue-loader"]  // 处理.vue文件
+      }
+    ]
+  }
+}
+```
+
+### 入口配置
+
+./src/main.js
+```
+  import Vue from 'vue';
+  import App from './app.vue';
+  import router from './router'; // 路由
+
+  Vue.config.productionTip = false
+
+  new Vue({
+    el: '#app',
+    router,
+    render: h => h(App)
+  })
+```
+
+### 页面配置
+
+index.html
+```
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>vue-webpack</title>
+  </head>
+  <body>
+  <div id="app"></div>
+   <script type="text/javascript" src="dist/bundle.js"></script>
+  </body>
+</html>
+```
+./src/app.Vue
+```
+<template id="">
+  <div id="App">
+    <h1>hello vue-webpack</h1>
+
+    <router-view /> // 路由视图
+  </div>
+</template>
+
+<script type="text/javascript">
+  export default{}
+</script>
+```
+
+./src/components/HelloWorld.vue
+```
+  <template id="">
+    <div id="hello">
+      <h1>hello vue.js</h1>
+    </div>
+  </template>
+
+  <script type="text/javascript">
+    export default{
+
+    }
+  </script>
+```
+
+### 路由的配置
+
+./src/router/index.js
+```
+import Vue from 'vue'
+import Router from 'vue-router'
+import HelloWorld from '../components/HelloWorld.vue'
+
+Vue.use(Router)
+
+export default new Router({
+  routes: [
+    {
+      path: '/',
+      component: HelloWorld
+    }
+  ]
+})
+```
+
+### 配置package.json
+
+package.json
+```
+"scripts": {
+  "dev": "webpack-dev-server --hot --open"
+},
+```
+
+接下来命令行输入`webpack`打包， 打包成功后输入`npm run dev`,浏览器会自动打开，显示如下：
+![](./rn-img/15165368425a64840a85a97.png)

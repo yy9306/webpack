@@ -1,5 +1,11 @@
-import show from './show.js'
-import './index.css'
-import './style/style.scss'
+import Vue from 'vue';
+import App from './app.vue';
+import router from './router'
 
-show('webpack.js')
+Vue.config.productionTip = false
+
+new Vue({
+  el: '#app',
+  router,
+  render: h => h(App)
+})
