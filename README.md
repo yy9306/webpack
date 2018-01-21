@@ -693,4 +693,4 @@ package.json
 ```
 
 接下来命令行输入`webpack`打包， 打包成功后输入`npm run dev`,浏览器会自动打开，显示如下：
-![](./rd-img/12345345dfds.png)
+![](./rd-img/324fdgd.png)
