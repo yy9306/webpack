@@ -4,15 +4,25 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server --hot --open"
+    "dev": "webpack-dev-server --hot --open",
+    "build": "webpack --progress --colors"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
     "css-loader": "^0.28.9",
+    "cssnano": "^3.10.0",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "file-loader": "^1.1.6",
+    "html-webpack-plugin": "^2.30.1",
     "node-sass": "^4.7.2",
+    "postcss-loader": "^2.1.0",
     "sass-loader": "^6.0.6",
+    "url-loader": "^0.6.2",
     "webpack": "^3.10.0"
   },
   "dependencies": {

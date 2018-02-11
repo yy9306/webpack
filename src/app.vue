@@ -1,6 +1,6 @@
 <template id="">
   <div id="App">
-    <h1>hello vue-webpack</h1>
+    <h1>hello vue-webpack  22</h1>
 
     <router-view />
   </div>

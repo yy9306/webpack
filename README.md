@@ -769,3 +769,206 @@ $n-color: blue;
 ![](./rd-img/15165492175a64b4610b97c.png)
 
 当然也可以支持`@import 'common/style.scss'`这种方式引入
+
+## 支持图片和字体
+
+安装图片及图标字体依赖的loader。
+
+```
+npm install url-loader file-loader -D
+```
+
+增加图片及图标字体的loader配置。
+
+```
+{
+  test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+  use: [{
+    loader: "url-loader",
+    options: {
+      limit: 10000,
+      name: 'images/[name].[hash:8].[etx]'  //加hash值防止缓存
+    }
+  }]
+},
+{
+  test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+  use: [{
+    loader: "url-loader",
+    options: {
+      limit: 10000,
+      name: 'fonts/[name].[hash:8].[etx]'  //将字体放入fonts文件夹下
+    }
+  }]
+}
+```
+
+## 构建
+
+package.json
+```
+"build":"webpack --progress --colors"
+```
+
+执行`npm run build`开始构建，完成后，可以看到工程目录下多了dist目录以及 dist/build.js。
+
+
+## 使用webpack的插件plugin
+
+### 压缩js
+
+压缩js之前应该注意，如果es6的语法没有转化为es5的语法，压缩的时候就会报错。之前转化es6de语法一般使用`babel-preset-es2015`，但是这个已经被官方网站废弃，取而代之的是`babel-preset-env`，首先需要安装：
+
+```
+npm i babel-loader babel-core babel-preset-env -D
+```
+
+增加babel的配置文件.babelrc。
+
+```
+{
+    "presets": [
+        ["env", { "modules": false }]
+    ],
+    "comments": false
+}
+```
+
+将 modules 设置为 false，即交由 Webpack 来处理模块化，通过其 TreeShaking 特性将有效减少打包出来的 JS 文件大小，可以自行对比下前后打包出来的文件的大小，效果还是不错的。
+
+comments 即是否保留注释。
+
+压缩 JS 采用`webpack.optimize.UglifyJsPlugin`，配置如下：
+
+```
+new webpack.optimize.UglifyJsPlugin()
+```
+
+### 提取css
+
+使用`extract-text-webpack-plugin`插件提取CSS。更改 css 及 sass 的 loader 配置如下。
+
+```
+//安装插件
+npm i extract-text-webpack-plugin -D
+```
+
+package.json
+```
+const ExtractTextPlugin = require("extract-text-webpack-plugin")
+
+module: {
+  rules: [
+    {
+      test: /\.vue$/,
+      use: {
+        loader: "vue-loader",
+        options: {
+          loaders: {
+            css:  ExtractTextPlugin.extract({
+              use: 'css-loader'
+            }),
+            sass: ExtractTextPlugin.extract({
+              use: ["css-loader", "sass-loader"]
+            })
+          }
+        }
+      }
+    },
+    {
+      test: /\.css$/,
+      use: ExtractTextPlugin.extract({
+        use: ["css-loader", "postcss-loader"]
+      })
+    },
+    {
+      test: /\.scss$/,
+      use: ExtractTextPlugin.extract({
+        use: ["css-loader", "postcss-loader", "sass-loader"]
+      })
+    },
+  ]
+}
+```
+
+这样还不行， 需要指定分离的路径。
+
+package.json
+```
+plugins: [
+  ......
+  new ExtractTextPlugin({
+      filename: "css/style.css"
+  })
+]
+```
+
+### PostCSS
+
+安装 postcss-loader 及 postcss 插件。
+
+```
+npm i postcss-loader cssnano -D
+```
+
+配置 loader 如下：
+
+```
+module: {
+  rules: [
+    {
+      test: /\.css$/,
+      use: ExtractTextPlugin.extract({
+        use: ["css-loader", "postcss-loader"]
+      })
+    },
+    {
+      test: /\.scss$/,
+      use: ExtractTextPlugin.extract({
+        use: ["css-loader", "postcss-loader", "sass-loader"]
+      })
+    },
+  ]
+}
+```
+
+此外postcss官方推荐新增postcss.config.js 来配置postcss插件， 新建一个文件在项目目录下
+
+postcss.config.js
+```
+module.exports = {
+  plugins: [
+    require('cssnano')({
+      autoprefixer: {
+          add: true,
+          browsers: ['> 5%']
+      },
+      zindex: {
+          disable:true  // 禁止zindex插件
+      }
+    })
+  ]
+}
+```
+
+zindex插件有点问题， 通过配置把这个插件禁止掉
+
+
+### 生成首页
+
+安装 html-webpack-plugin 插件。
+```
+npm i html-webpack-plugin -D
+```
+
+初始化插件
+```
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+plugins: [
+  ......
+  new HtmlWebpackPlugin({
+    filename: 'index.html',  // 生成的文件名称
+    template: 'index.html'
+  })
+]
+```

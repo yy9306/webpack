@@ -15,6 +15,7 @@ $n-color: blue;
 
 #hello{
   border: 1px solid blue;
+  box-shadow: 0 0 20px rgba(255,255,255,0.8);
   h1{
     color: yellow;
   }
